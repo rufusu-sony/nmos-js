@@ -16,6 +16,12 @@ import {
     SubscriptionsShow,
 } from './pages/subscriptions';
 import { QueryAPIsList, QueryAPIsShow } from './pages/queryapis';
+import {
+    NetworkEndpointsCreate,
+    NetworkEndpointsEdit,
+    NetworkEndpointsList,
+    NetworkEndpointsShow,
+} from './pages/networkendpoints';
 import dataProvider from './dataProvider';
 import Layout from './LayoutComponent';
 
@@ -50,6 +56,13 @@ const App = () => (
             list={SubscriptionsList}
             show={SubscriptionsShow}
             create={SubscriptionsCreate}
+        />
+        <Resource
+            name="endpoints"
+            list={NetworkEndpointsList}
+            show={NetworkEndpointsShow}
+            edit={NetworkEndpointsEdit}
+            create={NetworkEndpointsCreate}
         />
         <Resource name="logs" list={LogsList} show={LogsShow} />
     </Admin>

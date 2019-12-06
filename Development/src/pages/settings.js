@@ -70,6 +70,7 @@ const Settings = () => {
         queryAPI: changeAPIEndpoint('Query API', ''),
         loggingAPI: changeAPIEndpoint('Logging API', ''),
         dnssdAPI: changeAPIEndpoint('DNS-SD API', ''),
+        networkControlAPI: changeAPIEndpoint('Network Control API', ''),
         paging: parseInt(changePaging('valueRequest'), 10),
         rql: getBool(cookies.get('RQL')),
     });
@@ -90,6 +91,7 @@ const Settings = () => {
         changeAPIEndpoint('Query API', values.queryAPI);
         changeAPIEndpoint('Logging API', values.loggingAPI);
         changeAPIEndpoint('DNS-SD API', values.dnssdAPI);
+        changeAPIEndpoint('Network Control API', values.networkControlAPI);
         if (values.paging) {
             changePaging(values.paging);
         }
@@ -130,7 +132,6 @@ const Settings = () => {
                         <List>
                             <ListItem>
                                 <TextField
-                                    id="standard-queryAPI"
                                     label="Query API"
                                     variant="filled"
                                     value={values.queryAPI}
@@ -140,7 +141,6 @@ const Settings = () => {
                             </ListItem>
                             <ListItem>
                                 <TextField
-                                    id="standard-loggingAPI"
                                     label="Logging API"
                                     variant="filled"
                                     value={values.loggingAPI}
@@ -150,7 +150,6 @@ const Settings = () => {
                             </ListItem>
                             <ListItem>
                                 <TextField
-                                    id="standard-dnssdAPI"
                                     label="DNS-SD API"
                                     variant="filled"
                                     value={values.dnssdAPI}
@@ -158,9 +157,19 @@ const Settings = () => {
                                     className={classes.textField}
                                 />
                             </ListItem>
+                            <ListItem>
+                                <TextField
+                                    label="Network Control API"
+                                    variant="filled"
+                                    value={values.networkControlAPI}
+                                    onChange={handleInputChange(
+                                        'networkControlAPI'
+                                    )}
+                                    className={classes.textField}
+                                />
+                            </ListItem>
                             <ListItem className={classes.listItem}>
                                 <TextField
-                                    id="standard-paging"
                                     select
                                     label="Paging Limit"
                                     variant="filled"

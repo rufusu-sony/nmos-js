@@ -29,6 +29,7 @@ let LINK_HEADERS = {
 const LOGGING_API = 'Logging API';
 const QUERY_API = 'Query API';
 const DNS_API = 'DNS-SD API';
+const NETWORK_CONTROL_API = 'Network Control API';
 
 const cookies = new Cookies();
 
@@ -47,6 +48,9 @@ const defaultUrl = api => {
             return baseUrl + '/x-nmos/query/v1.3';
         case DNS_API:
             return baseUrl + '/x-dns-sd/v1.0';
+        case NETWORK_CONTROL_API:
+            path += '/x-nmos/netctrl/v1.0/';
+            return path;
         default:
             //not expected to be used
             return '';
@@ -65,6 +69,9 @@ export const resourceUrl = (resource, subresourceQuery = '') => {
         case 'queryapis':
             api = DNS_API;
             res = '_nmos-query._tcp';
+            break;
+        case 'endpoints':
+            api = NETWORK_CONTROL_API;
             break;
         default:
             //all pages other than logs/queryapis
@@ -230,12 +237,20 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
                 return { url: resourceUrl(resource) };
             }
         }
-        case UPDATE:
+        case UPDATE: {
             let differences = [];
-            let allDifferences = diff(
-                get(params, 'previousData.$staged'),
-                get(params, 'data.$staged')
-            );
+            const allDifferences = (() => {
+                if (resource === 'endpoints') {
+                    return diff(
+                        get(params, 'previousData'),
+                        get(params, 'data')
+                    );
+                }
+                return diff(
+                    get(params, 'previousData.$staged'),
+                    get(params, 'data.$staged')
+                );
+            })();
             if (allDifferences !== undefined) {
                 for (const d of allDifferences) {
                     if (d.rhs === '') {
@@ -260,11 +275,18 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
                 }
             }
 
-            let patchData = { transport_params: [] };
-            const legs = get(params, 'data.$staged.transport_params').length;
-            for (let i = 0; i < legs; i++) {
-                patchData.transport_params.push({});
-            }
+            let patchData = (() => {
+                if (resource === 'endpoints') {
+                    return {};
+                }
+                let patchData = { transport_params: [] };
+                const legs = get(params, 'data.$staged.transport_params')
+                    .length;
+                for (let i = 0; i < legs; i++) {
+                    patchData.transport_params.push({});
+                }
+                return patchData;
+            })();
 
             for (const d of differences) {
                 setJSON.set(patchData, `/${d.path.join('/')}`, d.rhs, true);
@@ -282,6 +304,16 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
                 method: 'PATCH',
                 body: JSON.stringify(patchData),
             };
+
+            const url = (() => {
+                if (resource === 'endpoints') {
+                    return `${cookies.get(NETWORK_CONTROL_API)}/endpoints/${
+                        params.id
+                    }`;
+                }
+                return `${params.data.$connectionAPI}/staged`;
+            })();
+
             return {
                 url: concatUrl(params.data.$connectionAPI, '/staged'),
                 options: options,
@@ -297,9 +329,22 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
                 options: options,
             };
         }
+        }
+        case CREATE: {
+            const url = `${returnUrl(resource)}/${resource}/${params.data.id}`;
+            const options = {
+                method: 'PUT',
+                body: JSON.stringify(params.data),
+            };
+            return {
+                url,
+                options: options,
+            };
+        }
         case DELETE:
             return {
                 url: resourceUrl(resource, `/${params.id}`),
+                url: `${returnUrl(resource)}/${resource}/${params.id}`,
                 options: { method: 'DELETE' },
             };
         default:

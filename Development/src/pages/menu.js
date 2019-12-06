@@ -14,6 +14,7 @@ import BuildIcon from '@material-ui/icons/Build';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
+import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 
 import {
     DeviceIcon,
@@ -103,6 +104,15 @@ const NestedList = () => {
                 icon={<SubscriptionIcon />}
             />
             <NavLinkMenuItem to={'/logs'} icon={<RegistryLogsIcon />} />
+            </StyledListItem>
+            <StyledListItem button component={NavLink} to={'/endpoints'}>
+                <ListItemIcon>
+                    <NetworkCheckIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Network Endpoints"
+                    primaryTypographyProps={{ noWrap: true }}
+                />
         </MenuList>
     );
 };
