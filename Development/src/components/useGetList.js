@@ -76,7 +76,14 @@ const useGetList = props => {
         ['basePath', 'filter', 'location', 'resource'],
         props
     );
-    const { basePath, resource, hasCreate, paginationURL, filter } = props;
+    const {
+        basePath,
+        resource,
+        hasCreate,
+        paginationURL,
+        pagingLimit,
+        filter,
+    } = props;
 
     const notify = useNotify();
     const version = useVersion();
@@ -93,6 +100,7 @@ const useGetList = props => {
             type: 'getList',
             resource,
             payload: {
+                pagingLimit,
                 filter,
                 paginationURL,
             },

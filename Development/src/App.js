@@ -15,6 +15,8 @@ import { QueryAPIsList, QueryAPIsShow } from './pages/queryapis';
 import dataProvider from './dataProvider';
 import Layout from './LayoutComponent';
 
+import Connections from './pages/connections';
+
 const App = () => (
     <Admin layout={Layout} dataProvider={dataProvider} theme={useTheme()}>
         <Resource name="Settings" list={Dashboard} />
@@ -41,6 +43,7 @@ const App = () => (
             show={ReceiversShow}
             edit={ReceiversEdit}
         />
+        <Resource name="connections" list={Connections} />
         <Resource
             name="subscriptions"
             list={SubscriptionsList}

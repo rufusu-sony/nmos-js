@@ -14,6 +14,7 @@ import BuildIcon from '@material-ui/icons/Build';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
+import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 
 import {
     DeviceIcon,
@@ -98,6 +99,10 @@ const NestedList = () => {
             <NavLinkMenuItem to={'/flows'} icon={<FlowIcon />} />
             <NavLinkMenuItem to={'/senders'} icon={<SenderIcon />} />
             <NavLinkMenuItem to={'/receivers'} icon={<ReceiverIcon />} />
+            <NavLinkMenuItem
+                to={'/connections'}
+                icon={<SettingsInputComponentIcon />}
+            />
             <NavLinkMenuItem
                 to={'/subscriptions'}
                 icon={<SubscriptionIcon />}

@@ -131,7 +131,10 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
                 return { url: params.paginationURL };
             }
 
-            const pagingLimit = cookies.get('Paging Limit');
+            const pagingLimit = (() => {
+                if (get(params, 'pagingLimit')) return params['pagingLimit'];
+                return cookies.get('Paging Limit');
+            })();
             const queryParams = [];
 
             API_URL = returnUrl(resource);
