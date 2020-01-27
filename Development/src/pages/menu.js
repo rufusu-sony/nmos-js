@@ -15,6 +15,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
+import PoolIcon from '@material-ui/icons/Pool';
 
 import {
     DeviceIcon,
@@ -99,20 +100,17 @@ const NestedList = () => {
             <NavLinkMenuItem to={'/flows'} icon={<FlowIcon />} />
             <NavLinkMenuItem to={'/senders'} icon={<SenderIcon />} />
             <NavLinkMenuItem to={'/receivers'} icon={<ReceiverIcon />} />
+            <NavLinkMenuItem to={'/endpoints'} icon={<NetworkCheckIcon />} />
+            <NavLinkMenuItem
+                to={'/network-flows'}
+                icon={<PoolIcon />}
+                label="Network Flows"
+            />
             <NavLinkMenuItem
                 to={'/subscriptions'}
                 icon={<SubscriptionIcon />}
             />
             <NavLinkMenuItem to={'/logs'} icon={<RegistryLogsIcon />} />
-            </StyledListItem>
-            <StyledListItem button component={NavLink} to={'/endpoints'}>
-                <ListItemIcon>
-                    <NetworkCheckIcon />
-                </ListItemIcon>
-                <ListItemText
-                    primary="Network Endpoints"
-                    primaryTypographyProps={{ noWrap: true }}
-                />
         </MenuList>
     );
 };

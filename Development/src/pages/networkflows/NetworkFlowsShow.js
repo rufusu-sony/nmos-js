@@ -1,9 +1,13 @@
 import React from 'react';
 import {
+    BooleanField,
     Button,
     ListButton,
+    ReferenceArrayField,
+    ReferenceField,
     ShowView,
     SimpleShowLayout,
+    SingleFieldList,
     TextField,
     TopToolbar,
     useShowController,
@@ -11,14 +15,15 @@ import {
 import NavLink from 'react-router-dom/NavLink';
 import Cookies from 'universal-cookie';
 import EditIcon from '@material-ui/icons/Edit';
+import ChipConditionalLabel from '../../components/ChipConditionalLabel';
 import JsonIcon from '../../icons/JsonIcon';
 
 const cookies = new Cookies();
 
-const NetworkEndpointsTitle = ({ record }) => {
+const NetworkFlowsTitle = ({ record }) => {
     return (
         <span>
-            Network Endpoint:{' '}
+            Network Flows:{' '}
             {record
                 ? record.label
                     ? `${record.label}`
@@ -28,8 +33,8 @@ const NetworkEndpointsTitle = ({ record }) => {
     );
 };
 
-const NetworkEndpointsShowActions = ({ basePath, data, resource }) => (
-    <TopToolbar title={<NetworkEndpointsTitle />}>
+const NetworkFlowsShowActions = ({ basePath, data, resource }) => (
+    <TopToolbar title={<NetworkFlowsTitle />}>
         {data ? (
             <Button
                 label={'Raw'}
@@ -62,34 +67,46 @@ const NetworkEndpointsShowActions = ({ basePath, data, resource }) => (
     </TopToolbar>
 );
 
-const NetworkEndpointsShow = props => {
+const NetworkFlowsShow = props => {
     const controllerProps = useShowController(props);
     return (
         <ShowView
             {...props}
             {...controllerProps}
-            title={<NetworkEndpointsTitle />}
-            actions={<NetworkEndpointsShowActions />}
+            title={<NetworkFlowsTitle />}
+            actions={<NetworkFlowsShowActions />}
         >
             <SimpleShowLayout>
                 <TextField label="ID" source="id" />
                 <TextField source="label" />
-                <TextField source="ip_address" label="IP Address" />
-                <TextField source="chassis_id" label="Local Chassis ID" />
-                <TextField source="port_id" label="Local Port ID" />
                 <TextField
-                    source="attached_network_device.chassis_id"
-                    label="Remote Chassis ID"
+                    source="multicast_address"
+                    label="Multicast Address"
                 />
-                <TextField
-                    source="attached_network_device.port_id"
-                    label="Remote Port ID"
-                />
-                <TextField source="max_bandwidth" label="Max Bandwidth" />
-                <TextField source="role" />
+                <ReferenceField
+                    label="Sender Endpoint"
+                    source="sender_endpoint_id"
+                    reference="endpoints"
+                    link="show"
+                >
+                    <ChipConditionalLabel source="label" />
+                </ReferenceField>
+                <ReferenceArrayField
+                    label="Receiver Endpoints"
+                    source="receiver_endpoint_ids"
+                    reference="endpoints"
+                >
+                    <SingleFieldList linkType="show">
+                        <ChipConditionalLabel source="label" />
+                    </SingleFieldList>
+                </ReferenceArrayField>
+                <TextField source="bandwidth" />
+                <TextField source="profile" />
+                <BooleanField source="forward_flow" label="Forward Flow" />
+                <TextField source="dscp" label="DSCP" />
             </SimpleShowLayout>
         </ShowView>
     );
 };
 
-export default NetworkEndpointsShow;
+export default NetworkFlowsShow;

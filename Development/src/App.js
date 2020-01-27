@@ -22,6 +22,12 @@ import {
     NetworkEndpointsList,
     NetworkEndpointsShow,
 } from './pages/networkendpoints';
+import {
+    NetworkFlowsCreate,
+    NetworkFlowsEdit,
+    NetworkFlowsList,
+    NetworkFlowsShow,
+} from './pages/networkflows';
 import dataProvider from './dataProvider';
 import Layout from './LayoutComponent';
 
@@ -63,6 +69,13 @@ const App = () => (
             show={NetworkEndpointsShow}
             edit={NetworkEndpointsEdit}
             create={NetworkEndpointsCreate}
+        />
+        <Resource
+            name="network-flows"
+            list={NetworkFlowsList}
+            show={NetworkFlowsShow}
+            edit={NetworkFlowsEdit}
+            create={NetworkFlowsCreate}
         />
         <Resource name="logs" list={LogsList} show={LogsShow} />
     </Admin>

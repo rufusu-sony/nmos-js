@@ -49,8 +49,7 @@ const defaultUrl = api => {
         case DNS_API:
             return baseUrl + '/x-dns-sd/v1.0';
         case NETWORK_CONTROL_API:
-            path += '/x-nmos/netctrl/v1.0/';
-            return path;
+            return baseUrl + '/x-nmos/netctrl/v1.0/';
         default:
             //not expected to be used
             return '';
@@ -71,7 +70,9 @@ export const resourceUrl = (resource, subresourceQuery = '') => {
             res = '_nmos-query._tcp';
             break;
         case 'endpoints':
+        case 'network-flows':
             api = NETWORK_CONTROL_API;
+            res = resource;
             break;
         default:
             //all pages other than logs/queryapis
@@ -240,7 +241,7 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
         case UPDATE: {
             let differences = [];
             const allDifferences = (() => {
-                if (resource === 'endpoints') {
+                if (resource === 'endpoints' || resource === 'network-flows') {
                     return diff(
                         get(params, 'previousData'),
                         get(params, 'data')
@@ -276,7 +277,7 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
             }
 
             let patchData = (() => {
-                if (resource === 'endpoints') {
+                if (resource === 'endpoints' || resource === 'network-flows') {
                     return {};
                 }
                 let patchData = { transport_params: [] };
@@ -306,8 +307,8 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
             };
 
             const url = (() => {
-                if (resource === 'endpoints') {
-                    return `${cookies.get(NETWORK_CONTROL_API)}/endpoints/${
+                if (resource === 'endpoints' || resource === 'network-flows') {
+                    return `${cookies.get(NETWORK_CONTROL_API)}/${resource}/${
                         params.id
                     }`;
                 }
@@ -315,38 +316,37 @@ const convertDataProviderRequestToHTTP = (type, resource, params) => {
             })();
 
             return {
-                url: concatUrl(params.data.$connectionAPI, '/staged'),
-                options: options,
-            };
-        case CREATE: {
-            const url = resourceUrl(resource);
-            const options = {
-                method: 'POST',
-                body: JSON.stringify(params.data),
-            };
-            return {
                 url,
-                options: options,
+                options,
             };
-        }
         }
         case CREATE: {
-            const url = `${returnUrl(resource)}/${resource}/${params.data.id}`;
-            const options = {
-                method: 'PUT',
-                body: JSON.stringify(params.data),
-            };
+            let url;
+            let options;
+            if (resource === 'subscriptions') {
+                url = resourceUrl(resource, `?${resource}`);
+                options = {
+                    method: 'POST',
+                    body: JSON.stringify(params.data),
+                };
+            } else {
+                url = resourceUrl(resource, `${params.data.id}`);
+                options = {
+                    method: 'PUT',
+                    body: JSON.stringify(params.data),
+                };
+            }
             return {
                 url,
-                options: options,
+                options,
             };
         }
-        case DELETE:
+        case DELETE: {
             return {
                 url: resourceUrl(resource, `/${params.id}`),
-                url: `${returnUrl(resource)}/${resource}/${params.id}`,
                 options: { method: 'DELETE' },
             };
+        }
         default:
             //not expected to be used
             return '';
